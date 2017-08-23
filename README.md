@@ -1,6 +1,6 @@
 # Elm SPA Boilerplate
 
-This is a stripped down version of a [Real World elm app](https://github.com/chrisUsick/elm-spa-example).
+This is a stripped down version of a [Real World elm app](https://github.com/chrisUsick/elm-spa-example) with [elm-mdl](https://debois.github.io/elm-mdl/).
 
 ## Usage
 
