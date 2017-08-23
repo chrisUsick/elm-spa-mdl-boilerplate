@@ -9,6 +9,7 @@ import Page.Home as Home
 import Page.Errored as Errored exposing (PageLoadError)
 import Views.Page as Page exposing (ActivePage)
 import Task as Task
+import Material
 
 type Page
     = Blank
@@ -25,13 +26,14 @@ type PageState
 
 type alias Model =
     { pageState : PageState
+    , mdl : Material.Model
     }
 
 
 init : Value -> Location -> ( Model, Cmd Msg )
 init val location =
     setRoute (Route.fromLocation location)
-        <| Model (Loaded initialPage)
+        <| Model (Loaded initialPage) (Material.model)
 
 initialPage : Page
 initialPage =
@@ -41,17 +43,16 @@ view : Model -> Html Msg
 view model =
     case model.pageState of
         Loaded page ->
-            viewPage False page
+            viewPage False page model
 
         TransitioningFrom page ->
-            viewPage True page
+            viewPage True page model
 
-
-viewPage :  Bool -> Page -> Html Msg
-viewPage isLoading page =
+viewPage :  Bool -> Page -> Model -> Html Msg
+viewPage isLoading page model =
     let
         frame =
-            Page.frame isLoading
+            Page.frame Mdl model.mdl isLoading
     in
     case page of
         NotFound ->
@@ -63,9 +64,9 @@ viewPage isLoading page =
             Html.text "haza"
                 |> frame Page.Other
         Home subModel ->
-            Home.view subModel
-                |> frame Page.Home
+                Home.view subModel
                 |> Html.map HomeMsg
+                |> frame Page.Home
         Errored subModel ->
             Errored.view subModel
                 |> frame Page.Other
@@ -110,6 +111,7 @@ type Msg
     = SetRoute (Maybe Route)
     | HomeLoaded (Result PageLoadError Home.Model)
     | HomeMsg Home.Msg
+    | Mdl (Material.Msg Msg)
 
 setRoute : Maybe Route -> Model -> (Model, Cmd Msg)
 setRoute maybeRoute model = 
